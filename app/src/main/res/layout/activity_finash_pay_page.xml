@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_finash_pay_page"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:orientation="vertical"
+    android:background="@drawable/jbshape"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:gravity="center"
+    tools:context="com.ice.cj_ice.PayActivity">
+
+
+
+    <ImageView
+        android:id="@+id/shipment_icon"
+        android:src="@drawable/icon"
+        android:layout_width="300dp"
+        android:layout_height="300dp" />
+
+    <TextView
+        android:id="@+id/shipment_state"
+        android:layout_marginTop="30dp"
+        android:text="支付成功，开始制做..."
+        android:textSize="35dp"
+        android:textColor="#000000"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/progesss1"
+        style="@style/rallerBarStyle"
+        android:layout_width="600dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="36dp"
+        android:background="@drawable/edit_shape"
+        android:indeterminateDrawable="@drawable/login_shape"
+        android:indeterminateOnly="false"
+        android:max="100"
+        android:maxHeight="50dp"
+        android:minHeight="16dp"
+        android:progress="0" />
+
+    <TextView
+        android:visibility="gone"
+        android:text="0%"
+        android:textSize="25dp"
+        android:id="@+id/progesss_value1"
+        android:layout_marginTop="10dp"
+        android:textColor="#ffffff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+
+    <LinearLayout
+       android:id="@+id/lin_Btn"
+       android:visibility="gone"
+       android:layout_marginTop="10dp"
+       android:gravity="center_horizontal"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content">
+
+       <Button
+           android:id="@+id/come_on_make"
+           android:text="继续制作"
+           android:textSize="30dp"
+           android:textColor="#fffe6986"
+           android:background="@drawable/edit_shape"
+           android:layout_width="300dp"
+           android:layout_height="100dp" />
+
+       <Button
+           android:id="@+id/back_main_page"
+           android:text="返回主页"
+           android:textSize="30dp"
+           android:textColor="#ffffff"
+           android:layout_marginLeft="50dp"
+           android:background="@drawable/login_shape"
+           android:layout_width="300dp"
+           android:layout_height="100dp" />
+
+   </LinearLayout>
+
+
+
+</LinearLayout>

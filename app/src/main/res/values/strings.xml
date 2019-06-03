@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">售卖助手</string>
+    <string name="test_model">部件测试模式</string>
+    <string name="test_arm">机械臂测试模式</string>
+    <string name="test_model_content">1.点击落杯器，落杯器\n掉落杯子\n2.点击冰淇淋料机按钮，\n对应出口处冰淇淋\n3.点击123456，\n对应位置配料桶出料\n4.点击旋转台，旋转台\n旋转</string>
+    <string name="test_arm_content">点击图示位置，机械臂\n移动到指定位置</string>
+    <string name="zhu_left">注：复位是所有部件恢复\n初始状态。主要针对冰淇\n淋机故障</string>
+    <string name="zhu_right">注：机械臂回到初\n始化位置</string>
+    <string name="cancel">取消</string>
+    <string name="submit">确定</string>
+</resources>

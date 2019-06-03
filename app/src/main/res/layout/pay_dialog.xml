@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+    <LinearLayout
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/edit_shape"
+        android:layout_width="250dp"
+        android:layout_height="380dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/closeBtn"
+                android:src="@drawable/close"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+
+
+                    <ImageView
+                        android:id="@+id/imageEr"
+                        android:background="@drawable/erweima"
+                        android:layout_width="190dp"
+                        android:layout_height="190dp" />
+
+
+            <TextView
+                android:id="@+id/deviceId"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="请用微信扫码支付"
+                android:textColor="#ff333333"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/timeId"
+                android:layout_marginTop="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="倒计时60s"
+                android:textColor="#fffe6986"
+                android:textSize="26sp" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+</LinearLayout>
