@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,9 +15,15 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 import com.ice.cj_ice.base.BaseActivity;
 import com.ice.cj_ice.leyaoyao.SimpleMsgHandler;
+import com.ice.cj_ice.leyaoyao.eventbus.PayResultEvent;
+import com.ice.cj_ice.leyaoyao.eventbus.WifiStateEvent;
 import com.ice.cj_ice.util.ArmUtil;
 import com.ice.cj_ice.util.Params;
 import com.ice.cj_ice.util.ShipMentUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import cn.lyy.netty.client.NettyClient;
 
 /**
@@ -67,6 +74,9 @@ public class BannerActivity extends BaseActivity {
                 mp.setLooping(true);
             }
         });
+        //测试
+        NettyClient nettyClient = new NettyClient(Params.appid,Params.appSecret,Params.host,Params.port,Params.uuid,"",new SimpleMsgHandler());
+        nettyClient.connect();
     }
 
     @Override
@@ -74,9 +84,50 @@ public class BannerActivity extends BaseActivity {
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+
+    @Subscribe
+    public void onEvent(WifiStateEvent event) {
+        int state = event.getState();
+        if(state == 1){
+            clickBtn.setVisibility(View.VISIBLE);
+            clickBtn.setText("点 击"+"\n"+"购 买");
+        }else {
+            clickBtn.setVisibility(View.GONE);
+        }
+    }
+
     //点击购买按钮
     public void fab(View view) {
-        int arm_isconnect = ArmUtil.arm_isconnect();
+        String result = sharedPreferences.getString("D", null);
+        if("1".equals(result)){
+            Intent intent = new Intent(this, BindActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }else if("0".equals(result)) {
+            Intent intent = new Intent(this, ShopActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }else {
+            Log.d("xuezhiyuan","无数据");
+            NettyClient nettyClient = new NettyClient(Params.appid,Params.appSecret,Params.host,Params.port,Params.uuid,"",new SimpleMsgHandler());
+            nettyClient.connect();
+        }
+        //正式
+       /* int arm_isconnect = ArmUtil.arm_isconnect();
         if(arm_isconnect == 1){
             String result = sharedPreferences.getString("D", null);
             if("1".equals(result)){
@@ -94,12 +145,15 @@ public class BannerActivity extends BaseActivity {
             }
         }else {
             clickBtn.setVisibility(View.GONE);
-        }
+        }*/
     }
 
     @Override
     protected void loadData() {
-        int armIsconnect = ArmUtil.arm_isconnect();
+        clickBtn.setVisibility(View.VISIBLE);
+        clickBtn.setText("点 击"+"\n"+"购 买");
+        //正式
+        /*int armIsconnect = ArmUtil.arm_isconnect();
         if(armIsconnect == 1){
             int all_location = shipMentUtil.get_all_location();
             if(all_location == 200){
@@ -114,7 +168,7 @@ public class BannerActivity extends BaseActivity {
                     nettyClient.connect();
                 }
             }
-        }
+        }*/
     }
 
 

@@ -8,6 +8,11 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+import com.ice.cj_ice.leyaoyao.eventbus.QcodeEvent;
+import com.ice.cj_ice.leyaoyao.eventbus.WifiStateEvent;
+
+import org.greenrobot.eventbus.EventBus;
+
 /**
  * Created by Administrator on 2019/4/16.
  */
@@ -26,6 +31,8 @@ public class NetWorkChangReceiver extends BroadcastReceiver {
             connType = "4G网络数据";
         } else if (type == ConnectivityManager.TYPE_WIFI) {
             connType = "WIFI网络";
+        }else if(type == ConnectivityManager.TYPE_ETHERNET){
+            connType = "有线网络数据";
         }
         return connType;
 
@@ -53,11 +60,13 @@ public class NetWorkChangReceiver extends BroadcastReceiver {
             if (info != null) {
                 //如果当前的网络连接成功并且网络连接可用
                 if (NetworkInfo.State.CONNECTED == info.getState() && info.isAvailable()) {
-                    if (info.getType() == ConnectivityManager.TYPE_WIFI || info.getType() == ConnectivityManager.TYPE_MOBILE) {
+                    if (info.getType() == ConnectivityManager.TYPE_WIFI || info.getType() == ConnectivityManager.TYPE_MOBILE || info.getType() == ConnectivityManager.TYPE_ETHERNET) {
                         Log.i("TAG", getConnectionType(info.getType()) + "连上");
+                        EventBus.getDefault().post(new WifiStateEvent(1));
                     }
                 } else {
                     Log.i("TAG", getConnectionType(info.getType()) + "断开");
+                    EventBus.getDefault().post(new WifiStateEvent(0));
                 }
             }
         }

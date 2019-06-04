@@ -1,9 +1,10 @@
 package com.ice.cj_ice;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,6 +17,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
+import com.google.zxing.WriterException;
 import com.ice.cj_ice.base.App;
 import com.ice.cj_ice.base.BaseActivity;
 import com.ice.cj_ice.leyaoyao.OpenNettyDemo;
@@ -23,6 +25,7 @@ import com.ice.cj_ice.leyaoyao.eventbus.PayResultEvent;
 import com.ice.cj_ice.leyaoyao.eventbus.QcodeEvent;
 import com.ice.cj_ice.model.db.DBManager;
 import com.ice.cj_ice.model.entity.CargoInfoBean;
+import com.ice.cj_ice.util.BitmapUtils;
 import com.ice.cj_ice.util.CreateUserDialog;
 import com.ice.cj_ice.util.ZxingUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -251,18 +254,16 @@ public class ShopActivity extends BaseActivity implements View.OnClickListener {
 
     //获取二维码
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(QcodeEvent event) throws IOException {
+    public void onEvent(QcodeEvent event) throws IOException, WriterException {
         qcode = event.getQcode();
-        Log.d("pinpinxia",qcode+"====code");
         if(qcode != null){
-            Bitmap bitmap = ZxingUtils.createBitmap(qcode);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-            byte[] bytes=baos.toByteArray();
-            Glide.with(this)
-                    .load(bytes)
-                    //.placeholder(R.drawable.erweima)
-                    .into(createUserPopWin.imageView);
+            Bitmap logo = BitmapFactory.decodeResource(super.getResources(), R.drawable.icon);
+            Bitmap code = BitmapUtils.createCode(App.activity, qcode,logo);
+            createUserPopWin.imageView.setImageBitmap(code);
+        }else {
+            Bitmap logo = BitmapFactory.decodeResource(super.getResources(), R.drawable.icon);
+            Bitmap code = BitmapUtils.createCode(App.activity, "暂无二维码信息，请查看网络",logo);
+            createUserPopWin.imageView.setImageBitmap(code);
         }
     }
 
@@ -320,6 +321,14 @@ public class ShopActivity extends BaseActivity implements View.OnClickListener {
         }else {
             OpenNettyDemo.getPayCode(Arrays.asList(payShop));
             createUserPopWin.show();
+            Bitmap logo = BitmapFactory.decodeResource(super.getResources(), R.drawable.icon);
+            Bitmap code = null;
+            try {
+                code = BitmapUtils.createCode(App.activity, "暂无二维码信息，网络无连接。不可购买",logo);
+            } catch (WriterException e) {
+                e.printStackTrace();
+            }
+            createUserPopWin.imageView.setImageBitmap(code);
             initsTimer();
             mTimer.schedule(mTimerTask, 1000, 1000);
         }
@@ -352,13 +361,13 @@ public class ShopActivity extends BaseActivity implements View.OnClickListener {
         Log.d("qianqian",result+"-----------------------");
         destroyTimer();
         Intent intent = new Intent(this, PayActivity.class);
-            Bundle bundle = new Bundle();
-            if(info.length() > 6){
-                bundle.putInt("location_z",Integer.parseInt(info.substring(0, 1)));
-                bundle.putInt("location_p",Integer.parseInt(info.substring(6, 7)));
-                bundle.putString("info", info);
-                bundle.putString("key",result);
-            }else {
+        Bundle bundle = new Bundle();
+        if(info.length() > 6){
+            bundle.putInt("location_z",Integer.parseInt(info.substring(0, 1)));
+            bundle.putInt("location_p",Integer.parseInt(info.substring(6, 7)));
+            bundle.putString("info", info);
+            bundle.putString("key",result);
+        }else {
             bundle.putInt("location_z",Integer.parseInt(info.substring(0, 1)));
             bundle.putString("info", info);
             bundle.putString("key",result);
@@ -490,13 +499,14 @@ public class ShopActivity extends BaseActivity implements View.OnClickListener {
         if(FLAG != 0){
             if(TAG == 10){
                 ok.setText("￥"+(getPrice(0)+getPrice(FLAG+2)));
-                return 0 + "," + 1 + "," + price.get(0) + ";" + (FLAG+2) + "," + 1 + "," + price.get(FLAG+2);
+                //仓位   数量   总金额
+                return 1 + "," + 1 + "," + price.get(0) + ";" + (FLAG+3) + "," + 1 + "," + price.get(FLAG+2);
             }else if(TAG == 100){
                 ok.setText("￥"+(getPrice(1)+getPrice(FLAG+2)));
-                return 1 + "," + 1 + "," + price.get(1) + ";" + (FLAG+2) + "," + 1 + "," + price.get(FLAG+2);
+                return 2 + "," + 1 + "," + price.get(1) + ";" + (FLAG+3) + "," + 1 + "," + price.get(FLAG+2);
             }else if(TAG == 1000){
                 ok.setText("￥"+(getPrice(2)+getPrice(FLAG+2)));
-                return 2 + "," + 1 + "," + price.get(2) + ";" + (FLAG+2) + "," + 1 + "," + price.get(FLAG+2);
+                return 3 + "," + 1 + "," + price.get(2) + ";" + (FLAG+3) + "," + 1 + "," + price.get(FLAG+2);
             }else {
                 ok.setText("立即购买");
                 return null;
@@ -504,13 +514,13 @@ public class ShopActivity extends BaseActivity implements View.OnClickListener {
         }else {
             if(TAG == 10){
                 ok.setText("￥"+getPrice(0));
-                return 0 + "," + 1 + "," + price.get(0);
+                return 1 + "," + 1 + "," + price.get(0);
             }else if(TAG == 100){
                 ok.setText("￥"+getPrice(1));
-                return 1 + "," + 1 + "," + price.get(1);
+                return 2 + "," + 1 + "," + price.get(1);
             }else if(TAG == 1000){
                 ok.setText("￥"+getPrice(2));
-                return 2 + "," + 1 + "," + price.get(2);
+                return 3 + "," + 1 + "," + price.get(2);
             }else {
                 ok.setText("请选择主料");
                 return null;

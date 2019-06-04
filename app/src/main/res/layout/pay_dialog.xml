@@ -34,11 +34,10 @@
 
 
 
-                    <ImageView
-                        android:id="@+id/imageEr"
-                        android:background="@drawable/erweima"
-                        android:layout_width="190dp"
-                        android:layout_height="190dp" />
+             <ImageView
+                 android:id="@+id/imageEr"
+                 android:layout_width="180dp"
+                 android:layout_height="180dp" />
 
 
             <TextView

@@ -54,14 +54,14 @@ public class OpenNettyDemo {
     }
 
     //   冰淇淋机启动结果上传
-    public static boolean eqStartResult(String key) {
+    public static boolean eqStartResult(String key,boolean result,String info) {
         tempKey = key;
         System.out.println("设备启动结果上传......");
         EqStartResultParam param = new EqStartResultParam();
         param.setUniqueCode(key);
-        param.setIsSuccess(true);
+        param.setIsSuccess(result);
         List<String> strs = new ArrayList<>();
-        strs.add("1,1,1");
+        strs.add(info);
         param.setChannels(strs);
         MsgProducer.eqStartResult(param);
         return true;
@@ -130,6 +130,7 @@ public class OpenNettyDemo {
         MsgProducer.getAppVersion(param);
         return true;
     }
+
 
     public static boolean getEquipmentParam() {
         System.out.println("获取设备参数设置......");

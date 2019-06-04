@@ -11,6 +11,7 @@ import com.ice.cj_ice.model.entity.CargoInfoBean;
 import cn.lyy.netty.common.param.UploadMainboardInfoParam;
 
 /**
+ * 上传仓位+商品信息  扫码后将仓位与商品绑定
  * Created by Administrator on 2019/4/23.
  */
 

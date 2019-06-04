@@ -9,6 +9,7 @@ import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 /**
+ * 生成bitmap对象
  * Created by Administrator on 2019/4/4.
  */
 
@@ -18,12 +19,13 @@ public class ZxingUtils {
         BitMatrix result = null;
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try {
+            //控制了二维码大小    400   400
             result = multiFormatWriter.encode(str, BarcodeFormat.QR_CODE, 400, 400);
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
             bitmap = barcodeEncoder.createBitmap(result);
         } catch (WriterException e){
             e.printStackTrace();
-        } catch (IllegalArgumentException iae){ // ?
+        } catch (IllegalArgumentException iae){
             return null;
         }
         return bitmap;

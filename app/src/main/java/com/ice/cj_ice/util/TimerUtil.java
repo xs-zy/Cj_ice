@@ -1,11 +1,7 @@
 package com.ice.cj_ice.util;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-
-import com.ice.cj_ice.base.App;
-
 import java.util.Timer;
 import java.util.TimerTask;
 

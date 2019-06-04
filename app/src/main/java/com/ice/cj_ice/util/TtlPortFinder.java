@@ -9,6 +9,7 @@ import android_serialport_api.SerialPortFinder;
 import android_serialport_api.SerialUtil;
 
 /**
+ * 检索连接下位机
  * Created by Administrator on 2019/1/18.
  */
 

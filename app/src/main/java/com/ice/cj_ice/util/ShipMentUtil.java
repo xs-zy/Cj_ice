@@ -7,6 +7,8 @@ import com.ice.cj_ice.base.App;
 import static android.content.Context.MODE_PRIVATE;
 
 /**
+ *
+ * 获取机械臂存储位置坐标
  * Created by Administrator on 2019/5/24.
  */
 

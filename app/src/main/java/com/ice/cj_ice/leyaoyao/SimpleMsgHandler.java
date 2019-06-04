@@ -2,6 +2,8 @@ package com.ice.cj_ice.leyaoyao;
 
 import android.content.SharedPreferences;
 import android.util.Log;
+
+import com.google.gson.Gson;
 import com.ice.cj_ice.base.App;
 import com.ice.cj_ice.leyaoyao.eventbus.PayResultEvent;
 import com.ice.cj_ice.leyaoyao.eventbus.QcodeEvent;

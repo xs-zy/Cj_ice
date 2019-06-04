@@ -13,6 +13,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.ice.cj_ice.base.App;
 import com.ice.cj_ice.base.BaseActivity;
+import com.ice.cj_ice.leyaoyao.OpenNettyDemo;
+import com.ice.cj_ice.model.db.DBManager;
 import com.ice.cj_ice.protocol.ParamsSettingUtil;
 import com.ice.cj_ice.util.ArmUtil;
 import com.ice.cj_ice.util.CRC16;
@@ -34,6 +36,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
     private HitbotNDKLoader robot;
     private SharedPreferences sharedPreferences;
     int angle = 0;
+    private DBManager dbManager;
     private String rotate_platform,dropCup,ice_left,ice_middle,ice_right,blank_one,blank_two,blank_three,blank_four,blank_five;
     private int location_z;
     private int location_p;
@@ -46,6 +49,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void initView() {
+        dbManager = new DBManager(this);
         shipment_state = (TextView) findViewById(R.id.shipment_state);
         imageView_success = (ImageView) findViewById(R.id.shipment_icon);
         //progesss = (ProgressBar) findViewById(R.id.progesss1);
@@ -65,6 +69,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
                 intent.getBundleExtra("message");
         info = bundleExtra.getString("info", null);
         key = bundleExtra.getString("key", null);
+        //货道
         location_z = bundleExtra.getInt("location_z", 400);
         location_p = bundleExtra.getInt("location_p", 400);
 
@@ -95,7 +100,8 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void loadData() {
-        shipment(location_z,location_p);
+        //shipment(location_z,location_p);
+        shipment_test(false);
     }
 
 
@@ -173,28 +179,24 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
                                     }else {
                                         sleep(3000);
                                         //changeText("接配料失败...出货失败...");
-                                        failResult("出货失败，您将在一分钟内收到退款\n" +
-                                                "感谢您的购买，期待后续服务");
+                                        choose_state(3);
                                         ArmUtil.init_location(dropCup,100);
                                     }
                                 }
                                 //放杯子动作
                                 ArmUtil.platform_location(rotate_platform);
                                 ArmUtil.init_location(dropCup,100);
-                                successResult("冰淇淋已经摆放到位，请取走您的冰淇淋\n" +
-                                        "别忘了获取勺子以享用美味\n");
+                                choose_state(5);
                             }else {
                                 sleep(3000);
                                 //changeText("接冰淇淋失败...出货失败...");
-                                failResult("出货失败，您将在一分钟内收到退款\n" +
-                                        "感谢您的购买，期待后续服务");
+                                choose_state(2);
                                 ArmUtil.init_location(dropCup,100);
                             }
                         }else {
                             sleep(3000);
                             //changeText("取杯失败...出货失败...");
-                            failResult("出货失败，您将在一分钟内收到退款\n" +
-                                    "感谢您的购买，期待后续服务");
+                            choose_state(1);
                             //机械臂运动到初始化
                             ArmUtil.init_location(dropCup,100);
                         }
@@ -204,6 +206,45 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    //测试出货流程
+    private void shipment_test(final boolean result){
+        angle = 0;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (this){
+                    changeText("准备取杯");
+                    sleep(3000);
+                    changeText("取杯成功");
+                    sleep(3000);
+                    changeText("运动到冰淇淋机料口位置");
+                    sleep(3000);
+                    changeText("准备接冰淇淋");
+                    if(result == true){
+                        sleep(3000);
+                        changeText("正在接冰淇淋");
+                        sleep(3000);
+                        changeText("旋转");
+                        sleep(3000);
+                        changeText("关闭旋转");
+                        sleep(3000);
+                        changeText("正在赶往配料桶");
+                        sleep(3000);
+                        changeText("已到达配料桶");
+                        sleep(3000);
+                        changeText("接配料成功");
+                        sleep(3000);
+                        changeText("正在放置旋转台");
+                        sleep(3000);
+                        choose_state(5);
+                    }else {
+                        choose_state(1);
+                    }
+
+                }
+            }
+        }).start();
+    }
 
     /**
      * 等待时长
@@ -249,7 +290,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
     /**
      * 出货失败
      */
-    private void failResult(final String text){
+    private int failResult(final String text){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -258,6 +299,47 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
                 lin.setVisibility(View.VISIBLE);
             }
         });
+        return 1;
+    }
+
+    /**
+     * 上传设备启动信息
+     */
+    private void choose_state(int TAG){
+        switch (TAG){
+            case 1:
+                //取杯子
+                failResult("出货失败，您将在一分钟内收到退款\n" +
+                        "感谢您的购买，期待后续服务");
+                OpenNettyDemo.eqStartResult(key,false,info);
+                break;
+            case 2:
+                //接冰淇淋
+                failResult("出货失败，您将在一分钟内收到退款\n" +
+                        "感谢您的购买，期待后续服务");
+                OpenNettyDemo.eqStartResult(key,false,info);
+                break;
+            case 3:
+                //接配料
+                failResult("出货失败，您将在一分钟内收到退款\n" +
+                        "感谢您的购买，期待后续服务");
+                OpenNettyDemo.eqStartResult(key,false,info);
+                break;
+            case 5:
+                successResult("冰淇淋已经摆放到位，请取走您的冰淇淋\n" +
+                        "别忘了获取勺子以享用美味\n");
+                //设备启动成功
+                OpenNettyDemo.eqStartResult(key,true,info);
+                if(location_p != 400){
+                    //只有主料
+                    //查询货道剩余量
+                    String dataCs_p = dbManager.queryDataCs(String.valueOf(location_p));
+                    OpenNettyDemo.uploadGift(dataCs_p,"1",String.valueOf(location_p));
+                }
+                String dataCs = dbManager.queryDataCs(String.valueOf(location_z));
+                OpenNettyDemo.uploadGift(dataCs,"1",String.valueOf(location_z));
+                break;
+        }
     }
 
 
