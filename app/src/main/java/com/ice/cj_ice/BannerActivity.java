@@ -87,6 +87,15 @@ public class BannerActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //查询是否缺料
+        /*int missingDetection = ArmUtil.shipment(8,0);
+        if(missingDetection == 1){
+            clickBtn.setText("点 击"+"\n"+"购 买");
+            clickBtn.setClickable(true);
+        }else {
+            clickBtn.setText("缺 料"+"\n"+"提 醒");
+            clickBtn.setClickable(false);
+        }*/
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
@@ -99,6 +108,10 @@ public class BannerActivity extends BaseActivity {
     }
 
 
+    /***
+     * 判断网络状态
+     * @param event
+     */
     @Subscribe
     public void onEvent(WifiStateEvent event) {
         int state = event.getState();
@@ -123,8 +136,8 @@ public class BannerActivity extends BaseActivity {
             startActivity(intent);
         }else {
             Log.d("xuezhiyuan","无数据");
-            NettyClient nettyClient = new NettyClient(Params.appid,Params.appSecret,Params.host,Params.port,Params.uuid,"",new SimpleMsgHandler());
-            nettyClient.connect();
+            /*NettyClient nettyClient = new NettyClient(Params.appid,Params.appSecret,Params.host,Params.port,Params.uuid,"",new SimpleMsgHandler());
+            nettyClient.connect();*/
         }
         //正式
        /* int arm_isconnect = ArmUtil.arm_isconnect();
@@ -140,8 +153,8 @@ public class BannerActivity extends BaseActivity {
                 startActivity(intent);
             }else {
                 Log.d("xuezhiyuan","无数据");
-                NettyClient nettyClient = new NettyClient(Params.appid,Params.appSecret,Params.host,Params.port,Params.uuid,"",new SimpleMsgHandler());
-                nettyClient.connect();
+                *//*NettyClient nettyClient = new NettyClient(Params.appid,Params.appSecret,Params.host,Params.port,Params.uuid,"",new SimpleMsgHandler());
+                nettyClient.connect();*//*
             }
         }else {
             clickBtn.setVisibility(View.GONE);

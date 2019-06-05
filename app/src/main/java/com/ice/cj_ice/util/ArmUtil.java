@@ -1,9 +1,13 @@
 package com.ice.cj_ice.util;
 
+import android.util.Log;
+
+import com.ice.cj_ice.leyaoyao.SimpleMsgHandler;
 import com.ice.cj_ice.protocol.ParamsSettingUtil;
 
 import NDKLoader.HitbotNDKLoader;
 import android_serialport_api.SerialUtil;
+import cn.lyy.netty.client.NettyClient;
 
 /**
  * Created by Administrator on 2019/5/28.
@@ -189,7 +193,8 @@ public class ArmUtil {
                 break;
             case 8:
                 //缺料检测
-
+                int missing_detection = send_Material_missing_detection();
+                value = missing_detection;
                 break;
             case 9:
                 //清洗冰淇淋机
@@ -214,6 +219,24 @@ public class ArmUtil {
         }
         return value;
     }
+
+
+    /**
+     * 查询冰淇淋机是否缺料
+     * @return
+     */
+    public static  int send_Material_missing_detection(){
+        byte[] crcByteValue = CRC16.getCRCByteValue(ParamsSettingUtil.ICE_BOX_STATE);
+        send((byte) 0x4D, (byte) 0x09, (byte) 0x09, (byte) 0x00, (byte) 0xC1, (byte) 0x00, crcByteValue[0], crcByteValue[1], (byte) 0xEF);
+        String receive = receive(10, 12, 20);
+        if("00".equals(receive)){
+            return 1;
+        }else {
+            return 0;
+        }
+    }
+
+
 
     /**
      * 发送落杯
@@ -327,6 +350,7 @@ public class ArmUtil {
             for (int i = 0; i < 10; i++) {
                 byte[] dataByte = serialUtil.getDataByte();
                 String hexString = serialUtil.bytesToHexString(dataByte, dataByte.length);
+                Log.d("xuezhiyuan===",hexString);
                 if ("3f".equals(hexString)) {
                     Thread.sleep(800);
                 } else {
@@ -334,6 +358,7 @@ public class ArmUtil {
                     int size = hexString.length();
                     if(size == length){
                         data = hexString.substring(start, end);
+                        return data;
                     }
                 }
             }
@@ -369,6 +394,10 @@ public class ArmUtil {
                 robot.movel_xyz(toFloat[0], toFloat[1], toFloat[2]-40, toFloat[5], 100);
                 break;
             }
+           /* if(start == false){
+                robot.movel_xyz(toFloat[0], toFloat[1], toFloat[2]-40, toFloat[5], 100);
+                break;
+            }*/
         }
     }
 

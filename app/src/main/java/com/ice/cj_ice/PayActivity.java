@@ -100,8 +100,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void loadData() {
-        //shipment(location_z,location_p);
-        shipment_test(false);
+        shipment(location_z,location_p);
     }
 
 
@@ -158,11 +157,11 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
                             String location = getInfoLocation(z);
                             ArmUtil.ice_location(location,100);
                             changeText("准备接冰淇淋");
-                            //旋转
-                            ArmUtil.rotate_ice(location,100,3);
                             //发送出料
                             int ice_discharge = ArmUtil.shipment(6, z);
                             if(ice_discharge == 1){
+                                //旋转
+                                ArmUtil.rotate_ice(location,100,2);
                                 changeText("正在接冰淇淋");
                                 sleep(8000);
                                 //是否运动到配料桶
@@ -206,45 +205,6 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    //测试出货流程
-    private void shipment_test(final boolean result){
-        angle = 0;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (this){
-                    changeText("准备取杯");
-                    sleep(3000);
-                    changeText("取杯成功");
-                    sleep(3000);
-                    changeText("运动到冰淇淋机料口位置");
-                    sleep(3000);
-                    changeText("准备接冰淇淋");
-                    if(result == true){
-                        sleep(3000);
-                        changeText("正在接冰淇淋");
-                        sleep(3000);
-                        changeText("旋转");
-                        sleep(3000);
-                        changeText("关闭旋转");
-                        sleep(3000);
-                        changeText("正在赶往配料桶");
-                        sleep(3000);
-                        changeText("已到达配料桶");
-                        sleep(3000);
-                        changeText("接配料成功");
-                        sleep(3000);
-                        changeText("正在放置旋转台");
-                        sleep(3000);
-                        choose_state(5);
-                    }else {
-                        choose_state(1);
-                    }
-
-                }
-            }
-        }).start();
-    }
 
     /**
      * 等待时长
@@ -290,7 +250,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
     /**
      * 出货失败
      */
-    private int failResult(final String text){
+    private void failResult(final String text){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -299,7 +259,6 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
                 lin.setVisibility(View.VISIBLE);
             }
         });
-        return 1;
     }
 
     /**
