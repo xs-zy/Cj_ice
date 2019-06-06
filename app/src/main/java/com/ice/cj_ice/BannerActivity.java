@@ -18,6 +18,7 @@ import com.ice.cj_ice.leyaoyao.SimpleMsgHandler;
 import com.ice.cj_ice.leyaoyao.eventbus.PayResultEvent;
 import com.ice.cj_ice.leyaoyao.eventbus.WifiStateEvent;
 import com.ice.cj_ice.util.ArmUtil;
+import com.ice.cj_ice.util.LeyaoyaoUtil;
 import com.ice.cj_ice.util.Params;
 import com.ice.cj_ice.util.ShipMentUtil;
 
@@ -32,13 +33,15 @@ import cn.lyy.netty.client.NettyClient;
 
 public class BannerActivity extends BaseActivity {
 
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences,sp_shop_state;
+    private SharedPreferences.Editor editor;
     private VideoView video;
     MediaController mMediaController;
     private Button clickBtn;
     final long[] mHints =  new long[4];
-    private int state;
+    private int state = 1;
     private ShipMentUtil shipMentUtil;
+
 
     @Override
     protected void layoutId() {
@@ -50,13 +53,14 @@ public class BannerActivity extends BaseActivity {
 
     @Override
     protected void initView() {
+        sp_shop_state = getSharedPreferences("shop_state", MODE_PRIVATE);
+        editor = sp_shop_state.edit();
         clickBtn = (Button) findViewById(R.id.clickBtn);
         video = (VideoView) findViewById(R.id.video);
     }
 
     @Override
     protected void initData() {
-        state = getIntent().getIntExtra("state", 2);
         sharedPreferences = getSharedPreferences("loginState", MODE_PRIVATE);
         shipMentUtil = new ShipMentUtil();
 
@@ -74,9 +78,6 @@ public class BannerActivity extends BaseActivity {
                 mp.setLooping(true);
             }
         });
-        //测试
-        NettyClient nettyClient = new NettyClient(Params.appid,Params.appSecret,Params.host,Params.port,Params.uuid,"",new SimpleMsgHandler());
-        nettyClient.connect();
     }
 
     @Override
@@ -87,15 +88,6 @@ public class BannerActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //查询是否缺料
-        /*int missingDetection = ArmUtil.shipment(8,0);
-        if(missingDetection == 1){
-            clickBtn.setText("点 击"+"\n"+"购 买");
-            clickBtn.setClickable(true);
-        }else {
-            clickBtn.setText("缺 料"+"\n"+"提 醒");
-            clickBtn.setClickable(false);
-        }*/
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
@@ -114,12 +106,14 @@ public class BannerActivity extends BaseActivity {
      */
     @Subscribe
     public void onEvent(WifiStateEvent event) {
-        int state = event.getState();
-        if(state == 1){
-            clickBtn.setVisibility(View.VISIBLE);
-            clickBtn.setText("点 击"+"\n"+"购 买");
+        int net_state = event.getState();
+        if(net_state == 1){
+            //连接乐摇摇
+            LeyaoyaoUtil.getLeyaoyaoUtil();
         }else {
             clickBtn.setVisibility(View.GONE);
+            //返回数据到测试界面
+            state = 2;
         }
     }
 
@@ -135,53 +129,40 @@ public class BannerActivity extends BaseActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }else {
-            Log.d("xuezhiyuan","无数据");
-            /*NettyClient nettyClient = new NettyClient(Params.appid,Params.appSecret,Params.host,Params.port,Params.uuid,"",new SimpleMsgHandler());
-            nettyClient.connect();*/
-        }
-        //正式
-       /* int arm_isconnect = ArmUtil.arm_isconnect();
-        if(arm_isconnect == 1){
-            String result = sharedPreferences.getString("D", null);
-            if("1".equals(result)){
-                Intent intent = new Intent(this, BindActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            }else if("0".equals(result)) {
-                Intent intent = new Intent(this, ShopActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            }else {
-                Log.d("xuezhiyuan","无数据");
-                *//*NettyClient nettyClient = new NettyClient(Params.appid,Params.appSecret,Params.host,Params.port,Params.uuid,"",new SimpleMsgHandler());
-                nettyClient.connect();*//*
-            }
-        }else {
             clickBtn.setVisibility(View.GONE);
-        }*/
+            state = 400;
+            Log.d("xuezhiyuan","无数据");
+        }
     }
 
     @Override
     protected void loadData() {
-        clickBtn.setVisibility(View.VISIBLE);
-        clickBtn.setText("点 击"+"\n"+"购 买");
-        //正式
-        /*int armIsconnect = ArmUtil.arm_isconnect();
-        if(armIsconnect == 1){
+        //机械臂是否连接
+        int armIsconnect = ArmUtil.arm_isconnect();
+        Log.d("xuezhiyuan","机械臂状态"+armIsconnect);
+        if(armIsconnect == 1) {
             int all_location = shipMentUtil.get_all_location();
-            if(all_location == 200){
-                if(state == 1){
-                    clickBtn.setVisibility(View.GONE);
-                }else if(state == 0){
-                    clickBtn.setVisibility(View.VISIBLE);
+            if (all_location == 200) {
+                //查询是否缺料
+                int missingDetection = ArmUtil.shipment(8,0);
+                if(missingDetection == 1){
+                    state = 0;
                     clickBtn.setText("点 击"+"\n"+"购 买");
                 }else {
+                    state = 5;
                     clickBtn.setVisibility(View.GONE);
-                    NettyClient nettyClient = new NettyClient(Params.appid,Params.appSecret,Params.host,Params.port,Params.uuid,"",new SimpleMsgHandler());
-                    nettyClient.connect();
+                    ArmUtil.shipment(13, 0);
                 }
+            }else {
+                state = 4;
+                //无坐标
+                clickBtn.setVisibility(View.GONE);
             }
-        }*/
+        }else {
+            state = 3;
+            //未连接机械臂
+            clickBtn.setVisibility(View.GONE);
+        }
     }
 
 
@@ -194,6 +175,10 @@ public class BannerActivity extends BaseActivity {
         if (SystemClock.uptimeMillis() - mHints[0] <= 500) {
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            Log.d("xuezhiyuan","传递状态值"+state);
+            //intent.putExtra("state",state);
+            editor.putInt("shop_state",state);
+            editor.commit();
             startActivity(intent);
         }
     }

@@ -108,7 +108,6 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
     protected void in(Class tClass) {
         Intent intent = new Intent(this, tClass);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("state", 0);
         startActivity(intent);
         finish();
     }

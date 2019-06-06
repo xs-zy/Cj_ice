@@ -136,7 +136,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
     public void back(View view){
         Intent intent = new Intent(this, BannerActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("state",0);
         startActivity(intent);
     }
 

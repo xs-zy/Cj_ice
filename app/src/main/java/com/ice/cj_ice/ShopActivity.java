@@ -358,7 +358,7 @@ public class ShopActivity extends BaseActivity implements View.OnClickListener {
     @Subscribe
     public void onEvent(PayResultEvent event) {
         String result = event.getResult();
-        Log.d("qianqian",result+"-----------------------");
+       // Log.d("qianqian",result+"-----------------------");
         destroyTimer();
         Intent intent = new Intent(this, PayActivity.class);
         Bundle bundle = new Bundle();

@@ -202,7 +202,8 @@ public class ArmUtil {
                 break;
             case 10:
                 //冰淇淋机自动模式
-
+                int open_auto_model = send_open_auto_model();
+                value = open_auto_model;
                 break;
             case 11:
                 //冰淇淋机出料口全部打开全部关闭
@@ -214,11 +215,44 @@ public class ArmUtil {
                 break;
             case 13:
                 //冰淇淋机停止当前动作
-
+                int close_auto_model = send_close_auto_model();
+                value = close_auto_model;
                 break;
         }
         return value;
     }
+
+    /**
+     * 发送开启自动模式
+     * @return
+     */
+    public static int send_open_auto_model(){
+        byte[] crcByteValue = CRC16.getCRCByteValue(ParamsSettingUtil.AUTO_MODEL);
+        send((byte) 0x4D, (byte) 0x4A, (byte) 0x09, (byte) 0x00, (byte) 0xC6,(byte)0x00,crcByteValue[0], crcByteValue[1], (byte) 0xEF);
+        String receive = receive(12, 14, 20);
+        if("00".equals(receive)){
+            return 1;
+        }else {
+            return 0;
+        }
+    }
+
+
+    /**
+     * 发送关闭自动模式
+     * @return
+     */
+    public static int send_close_auto_model(){
+        byte[] crcByteValue = CRC16.getCRCByteValue(ParamsSettingUtil.CLOSE_AUTO);
+        send((byte) 0x4D, (byte) 0x4A, (byte) 0x09, (byte) 0x00, (byte) 0xC8,(byte)0x00,crcByteValue[0], crcByteValue[1], (byte) 0xEF);
+        String receive = receive(12, 14, 20);
+        if("00".equals(receive)){
+            return 1;
+        }else {
+            return 0;
+        }
+    }
+
 
 
     /**

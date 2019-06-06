@@ -36,11 +36,11 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     private volatile  boolean TAG = false;
     private Button studyBtn,up,down,shortAgeBtn;
     private SharedPreferences.Editor editor;
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences,sp;
     private LoadingDialog loadingDialog;
-    private int NUM = 5,STATE = 0;
+    private int NUM = 5;
     private String rotate_platform;
-    private TextView state;
+    private TextView state_test;
     private String connectionState;
     private SerialUtil serialUtil;
     private int IS_INIT = 0;
@@ -52,8 +52,9 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void initView() {
+        sp = App.activity.getSharedPreferences("shop_state", MODE_PRIVATE);
         shortAgeBtn = (Button) findViewById(R.id.shortage);
-        state = (TextView) findViewById(R.id.server_State);
+        state_test = (TextView) findViewById(R.id.server_State);
         up = (Button) findViewById(R.id.up_arm);
         down = (Button) findViewById(R.id.down_arm);
         studyBtn = (Button) findViewById(R.id.studyBtn);
@@ -61,10 +62,54 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         left = (RelativeLayout) findViewById(R.id.r_left);
         mSegmentView = (SegmentView) findViewById(R.id.segmentview);
         segmentViewShop = (SegmentView) findViewById(R.id.segmentview_shop);
-        segmentViewShop.setSegmentText("正常",0);
-        segmentViewShop.setSegmentText("暂停服务",1);
+        int state = sp.getInt("shop_state", 1);
+        int shopState = getShopState(state);
+        if(shopState == 0){
+            segmentViewShop.setSegmentText("正常",0);
+            segmentViewShop.setSegmentText("暂停服务",1);
+        }else {
+            segmentViewShop.setSegmentText("正常",1);
+            segmentViewShop.setSegmentText("暂停服务",0);
+        }
         mSegmentView.setSegmentText("部件测试", 0);
         mSegmentView.setSegmentText("机械臂测试", 1);
+
+    }
+
+
+    private int getShopState(int STATE){
+        int df = 1;
+        switch (STATE){
+            case 0:
+                df = 0;
+                state_test.setText("正在售卖");
+                break;
+            case 1:
+                df = 1;
+                state_test.setText("暂停服务");
+                break;
+            case 2:
+                df = 1;
+                state_test.setText("网络无连接");
+                break;
+            case 3:
+                df = 1;
+                state_test.setText("机械臂未连接");
+                break;
+            case 4:
+                df = 1;
+                state_test.setText("无坐标");
+                break;
+            case 5:
+                df = 1;
+                state_test.setText("缺料");
+                break;
+            case 400:
+                df = 1;
+                state_test.setText("暂无结果");
+                break;
+        }
+        return df;
     }
 
     @Override
@@ -82,23 +127,21 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void initListener() {
-        segmentViewShop.setOnSegmentViewClickListener(new SegmentView.onSegmentViewClickListener() {
+        /*segmentViewShop.setOnSegmentViewClickListener(new SegmentView.onSegmentViewClickListener() {
             @Override
             public void onSegmentViewClick(View view, int postion) {
                 switch (postion) {
                     case 0:
-                        state.setText("正在售卖");
                         STATE = 0;
                         break;
                     case 1:
-                        state.setText("停止售卖");
                         STATE = 1;
                         break;
                     default:
                         break;
                 }
             }
-        });
+        });*/
 
         mSegmentView.setOnSegmentViewClickListener(new SegmentView.onSegmentViewClickListener() {
 
@@ -1035,7 +1078,6 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     public void go_shopping(View view){
         Intent intent = new Intent(this, BannerActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.putExtra("state",STATE);
         startActivity(intent);
     }
 
