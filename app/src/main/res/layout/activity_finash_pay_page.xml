@@ -13,13 +13,36 @@
     android:gravity="center"
     tools:context="com.ice.cj_ice.PayActivity">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <com.ice.cj_ice.util.CountDownView
+            android:layout_alignParentRight="true"
+            android:id="@+id/tv_red_skip"
+            android:layout_width="130dp"
+            android:text="跳过"
+            android:textColor="#ffffff"
+            android:textSize="10sp"
+            android:layout_height="130dp"/>
 
-    <ImageView
+        <ImageView
+            android:id="@+id/shipment_icon"
+            android:src="@drawable/icon"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+   <!-- <ImageView
         android:id="@+id/shipment_icon"
         android:src="@drawable/icon"
         android:layout_width="300dp"
-        android:layout_height="300dp" />
+        android:layout_height="300dp" />-->
+
+
 
     <TextView
         android:id="@+id/shipment_state"
@@ -30,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <ProgressBar
+  <!--  <ProgressBar
         android:visibility="gone"
         android:id="@+id/progesss1"
         style="@style/rallerBarStyle"
@@ -54,7 +77,7 @@
         android:textColor="#ffffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
+-->
 
 
     <LinearLayout

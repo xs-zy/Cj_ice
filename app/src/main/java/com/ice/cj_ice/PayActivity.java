@@ -18,6 +18,7 @@ import com.ice.cj_ice.model.db.DBManager;
 import com.ice.cj_ice.protocol.ParamsSettingUtil;
 import com.ice.cj_ice.util.ArmUtil;
 import com.ice.cj_ice.util.CRC16;
+import com.ice.cj_ice.util.CountDownView;
 import com.ice.cj_ice.util.LengthUtil;
 import com.ice.cj_ice.util.SendOrderUtil;
 import com.ice.cj_ice.util.TtlPortFinder;
@@ -40,6 +41,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
     private String rotate_platform,dropCup,ice_left,ice_middle,ice_right,blank_one,blank_two,blank_three,blank_four,blank_five;
     private int location_z;
     private int location_p;
+    private CountDownView cdv;
 
 
     @Override
@@ -50,10 +52,12 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void initView() {
         dbManager = new DBManager(this);
+        cdv = (CountDownView) findViewById(R.id.tv_red_skip);
+        cdv.setVisibility(View.GONE);
         shipment_state = (TextView) findViewById(R.id.shipment_state);
         imageView_success = (ImageView) findViewById(R.id.shipment_icon);
         //progesss = (ProgressBar) findViewById(R.id.progesss1);
-        progesssValue = (TextView) findViewById(R.id.progesss_value1);
+        /*progesssValue = (TextView) findViewById(R.id.progesss_value1);*/
         lin = (LinearLayout) findViewById(R.id.lin_Btn);
         come_on_btn = (Button) findViewById(R.id.come_on_make);
         back_main_page = (Button) findViewById(R.id.back_main_page);
@@ -73,8 +77,8 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
         location_z = bundleExtra.getInt("location_z", 400);
         location_p = bundleExtra.getInt("location_p", 400);
 
-        Log.d("xuezhiyuan",location_z+"主料");
-        Log.d("xuezhiyuan",location_p+"配料");
+      //  Log.d("xuezhiyuan",location_z+"主料");
+      //  Log.d("xuezhiyuan",location_p+"配料");
 
         //加载静态库
         robot = ArmUtil.getArmUtil();
@@ -100,6 +104,15 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void loadData() {
+
+        cdv.setAddCountDownListener(new CountDownView.OnCountDownFinishListener() {
+            @Override
+            public void countDownFinished() {
+                //时间完了 干的事情
+                in(BannerActivity.class);
+            }
+        });
+        cdv.setCountdownTime(30);
         shipment(location_z,location_p);
     }
 
@@ -241,6 +254,8 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
                 shipment_state.setText(text);
                 imageView_success.setImageResource(R.drawable.finash);
                 lin.setVisibility(View.VISIBLE);
+                cdv.setVisibility(View.VISIBLE);
+                cdv.startCountDown();
             }
         });
     }
@@ -256,6 +271,8 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
                 shipment_state.setText(text);
                 imageView_success.setImageResource(R.drawable.shipment_error);
                 lin.setVisibility(View.VISIBLE);
+                cdv.setVisibility(View.VISIBLE);
+                cdv.startCountDown();
             }
         });
     }
@@ -298,6 +315,8 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
                 OpenNettyDemo.uploadGift(dataCs,"1",String.valueOf(location_z));
                 break;
         }
+        //开启倒计时
+
     }
 
 
