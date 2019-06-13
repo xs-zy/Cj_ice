@@ -21,20 +21,20 @@ import java.util.Enumeration;
 public class Params {
 
     //-----------------------------------------测试----------------------
-    public static final String appid = "1c78874465a4ec86";
+    /*public static final String appid = "1c78874465a4ec86";
     public static final String appSecret = "33f993659af53d02226e279c39002d94";
     public static final String host = "sm.leyaoyao.com" ; //"dm.leyaoyao.com";
     public static final Integer port = 5922 ; // 5921;
     public static final String uuid = getMacAddressFromIp(App.activity);
-    public static final String PASSWORD = "000000";
+    public static final String PASSWORD = "000000";*/
 
     //-----------------------------------------正式----------------------
-    /*public static final String appid = "5a36e8jbrr55f4b3";
+    public static final String appid = "5a36e8jbrr55f4b3";
     public static final String appSecret = "c06893139ebb32ak920o8300e9459n9c";
     public static final String host = "ehw.leyaoyao.com" ; //"dm.leyaoyao.com";
     public static final Integer port = 5923; // 5921;
     public static final String uuid = getMacAddressFromIp(App.activity);
-    public static final String PASSWORD = "000000";*/
+    public static final String PASSWORD = "000000";
 
 
     public static String getMacAddressFromIp(Context context) {

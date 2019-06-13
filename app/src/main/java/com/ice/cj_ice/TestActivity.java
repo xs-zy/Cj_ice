@@ -34,10 +34,10 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     HitbotNDKLoader robot;
     private CommomDialog commomDialog;
     private volatile  boolean TAG = false;
-    private Button studyBtn,up,down,shortAgeBtn;
+    private Button studyBtn,up,down,shortAgeBtn,initBtn;
     private SharedPreferences.Editor editor;
     private SharedPreferences sharedPreferences,sp;
-    private LoadingDialog loadingDialog;
+
     private int NUM = 5;
     private String rotate_platform;
     private TextView state_test;
@@ -60,6 +60,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         studyBtn = (Button) findViewById(R.id.studyBtn);
         right = (RelativeLayout) findViewById(R.id.r_right);
         left = (RelativeLayout) findViewById(R.id.r_left);
+        initBtn = (Button) findViewById(R.id.init);
         mSegmentView = (SegmentView) findViewById(R.id.segmentview);
         segmentViewShop = (SegmentView) findViewById(R.id.segmentview_shop);
         int state = sp.getInt("shop_state", 1);
@@ -118,7 +119,6 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         robot = ArmUtil.getArmUtil();
         sharedPreferences = App.activity.getSharedPreferences("location", MODE_PRIVATE);
         editor = sharedPreferences.edit();
-        loadingDialog = new LoadingDialog(this);
         TtlPortFinder ttlPortFinder = TtlPortFinder.getTtlPortFinder();
         serialUtil = ttlPortFinder.initSerial();
     }
@@ -232,8 +232,9 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                 }
             });
         }
-
     }
+
+
 
     /**
      * 落杯器
@@ -962,6 +963,22 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     }
 
     /**
+     * 初始化位置
+     * @param view
+     */
+    public void init_location (View view)  {
+        if(MODEL == 0){
+            //部件测试
+
+        }else if(MODEL == 1 ||  MODEL == 2){
+            dialogLocation("提示","是否设置此位置","init_location");
+        }else {
+            //请切换模式
+            Toast.makeText(TestActivity.this,"请切换模式",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
      *  一键测试
      * @param view
      */
@@ -988,6 +1005,8 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                         getinitLocation();
                         //运动到接冰淇淋位置
                         ArmUtil.ice_location(ice_right,100);
+                        //运动到初始化位置
+                        getinitLocation();
                         //运动到接配料位置
                         ArmUtil.blunk_location(blank_one,30);
                         //运动到旋转台位置
@@ -1085,18 +1104,20 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
      * 获取初始化位置
      */
     public void getinitLocation(){
+        String initLocation = sharedPreferences.getString("init_location", null);
         String dropCup = sharedPreferences.getString("drop_cup", null);
+        final float[] toFloat_init = stringToFloat(initLocation);
         if(dropCup == null){
-            robot.movej_angle(46, -106, -83, -93, 100, 0);
+            robot.movej_angle(toFloat_init[3], toFloat_init[4], toFloat_init[2], toFloat_init[5], 100, 0);
             robot.wait_stop();
         }else {
             final float[] toFloat = stringToFloat(dropCup);
-            robot.movej_angle(46, -106, toFloat[2], -93, 100, 0);
+            robot.movej_angle(toFloat_init[3], toFloat_init[4], toFloat[2], toFloat_init[5], 100, 0);
             robot.wait_stop();
         }
-
-
     }
+
+
 
     /**
      * 发送指令

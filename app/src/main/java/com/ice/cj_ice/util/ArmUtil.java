@@ -73,9 +73,10 @@ public class ArmUtil {
      * @param drop_cup  落杯器高度
      * @return
      */
-    public static boolean init_location(String drop_cup,int delive){
+    public static boolean init_location(String drop_cup,String init_location,int delive){
         float[] drop_cup_height = stringToFloat(drop_cup);
-        robot.movej_angle(46, -106, drop_cup_height[2], -93, delive, 0);
+        float[] initLocation = stringToFloat(init_location);
+        robot.movej_angle(initLocation[3], initLocation[4], drop_cup_height[2], initLocation[5], delive, 0);
         boolean waitStop = robot.wait_stop();
         return waitStop;
     }

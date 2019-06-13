@@ -38,7 +38,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
     private SharedPreferences sharedPreferences;
     int angle = 0;
     private DBManager dbManager;
-    private String rotate_platform,dropCup,ice_left,ice_middle,ice_right,blank_one,blank_two,blank_three,blank_four,blank_five;
+    private String initLocation,rotate_platform,dropCup,ice_left,ice_middle,ice_right,blank_one,blank_two,blank_three,blank_four,blank_five;
     private int location_z;
     private int location_p;
     private CountDownView cdv;
@@ -85,6 +85,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
         sharedPreferences = App.activity.getSharedPreferences("location", MODE_PRIVATE);
         //获取坐标值
         rotate_platform = sharedPreferences.getString("rotate_platform", null);
+        initLocation = sharedPreferences.getString("init_location", null);
         dropCup = sharedPreferences.getString("drop_cup", null);
         ice_left = sharedPreferences.getString("ice_left", null);
         ice_middle = sharedPreferences.getString("ice_middle", null);
@@ -156,7 +157,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
                         ArmUtil.init_arm();
                         ArmUtil.unlock_arm();
                          //机械臂运动到初始化
-                        ArmUtil.init_location(dropCup,100);
+                        ArmUtil.init_location(dropCup,initLocation,100);
                         //运动到落杯器
                         ArmUtil.drop_location(dropCup,100);
                         //发送落杯
@@ -164,7 +165,7 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
                         if(drop_result == 1){
                             changeText("取杯成功");
                             //机械臂运动到初始化
-                            ArmUtil.init_location(dropCup,100);
+                            ArmUtil.init_location(dropCup,initLocation,100);
                             //运动到出料口
                             String location = getInfoLocation(z);
                             ArmUtil.ice_location(location,100);
@@ -178,6 +179,8 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
                                 sleep(8000);
                                 //是否运动到配料桶
                                 if(p != 400){
+                                    //回到初始化
+                                    ArmUtil.init_location(dropCup,initLocation,100);
                                     String p_location = getInfoLocation(p);
                                     //运动到配料桶
                                     changeText("正在赶往配料桶");
@@ -191,25 +194,25 @@ public class PayActivity extends BaseActivity implements View.OnClickListener {
                                         sleep(3000);
                                         //changeText("接配料失败...出货失败...");
                                         choose_state(3);
-                                        ArmUtil.init_location(dropCup,100);
+                                        ArmUtil.init_location(dropCup,initLocation,100);
                                     }
                                 }
                                 //放杯子动作
                                 ArmUtil.platform_location(rotate_platform);
-                                ArmUtil.init_location(dropCup,100);
+                                ArmUtil.init_location(dropCup,initLocation,100);
                                 choose_state(5);
                             }else {
                                 sleep(3000);
                                 //changeText("接冰淇淋失败...出货失败...");
                                 choose_state(2);
-                                ArmUtil.init_location(dropCup,100);
+                                ArmUtil.init_location(dropCup,initLocation,100);
                             }
                         }else {
                             sleep(3000);
                             //changeText("取杯失败...出货失败...");
                             choose_state(1);
                             //机械臂运动到初始化
-                            ArmUtil.init_location(dropCup,100);
+                            ArmUtil.init_location(dropCup,initLocation,100);
                         }
                     }
                 }
